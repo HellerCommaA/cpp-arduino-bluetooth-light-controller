@@ -18,10 +18,12 @@ String Lights::serialValue = "";
 
 Lights::Lights()
 {
+    // begins comms over bt serial
     Serial.begin(9600);
     delay(200);
 
-    pinMode(BUILTIN, HIGH);
+    pinMode(BUILTIN, OUTPUT);
+    pinMode(LED, OUTPUT);
     ttyprintf("connection established\n");
     serialThread = new Thread();
     updateLightsThread = new Thread();
@@ -42,11 +44,13 @@ Lights::updateLights()
 {
     if(serialValue == "1") {
         digitalWrite(BUILTIN, HIGH);
+        digitalWrite(LED, LOW);
         ttyprintf("turning LED on\n");
         serialValue = "x";
     }
     if (serialValue == "0") {
         digitalWrite(BUILTIN, LOW);
+        digitalWrite(LED, HIGH);
         ttyprintf("turning LED off\n");
         serialValue = "x";
     }
@@ -63,8 +67,6 @@ Lights::run()
 
     if (serialThread->shouldRun())
         serialThread->run();
-    // delay(100);
     if (updateLightsThread->shouldRun())
         updateLightsThread->run();
-    // delay(100);
 }
