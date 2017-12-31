@@ -5,6 +5,4 @@ typedef enum {
     BUILTIN = 13
 } PIN;
 
-
-
 #endif

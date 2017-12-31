@@ -15,15 +15,14 @@ void ttyprintf(char *fmt, ... ){
 }
 
 String Lights::serialValue = "";
-SoftwareSerial gSerial(0, 1);
 
 Lights::Lights()
 {
-    gSerial.begin(9600);
+    Serial.begin(9600);
+    delay(200);
 
     pinMode(BUILTIN, HIGH);
-    Serial.begin(9600);
-    
+    ttyprintf("connection established\n");
     serialThread = new Thread();
     updateLightsThread = new Thread();
 }
@@ -31,21 +30,25 @@ Lights::Lights()
 void
 Lights::serialRead()
 {
-    if(gSerial.available()) {
-        Lights::serialValue = gSerial.readString();
-        ttyprintf("got: '%s'\n", serialValue.c_str());
+    if (Serial.available()) {
+        // reads from bt module
+        Lights::serialValue = Serial.readString();
+        ttyprintf("got command: %s\n", serialValue.c_str());
     }
 }
 
 void
 Lights::updateLights()
 {
-
     if(serialValue == "1") {
         digitalWrite(BUILTIN, HIGH);
+        ttyprintf("turning LED on\n");
+        serialValue = "x";
     }
-    if (serialValue == "2") {
+    if (serialValue == "0") {
         digitalWrite(BUILTIN, LOW);
+        ttyprintf("turning LED off\n");
+        serialValue = "x";
     }
 }
 
@@ -53,14 +56,15 @@ void
 Lights::run()
 {
     serialThread->onRun(Lights::serialRead);
-    serialThread->setInterval(500);
+    serialThread->setInterval(50);
 
     updateLightsThread->onRun(Lights::updateLights);
-    updateLightsThread->setInterval(500);
-    
+    updateLightsThread->setInterval(50);
+
     if (serialThread->shouldRun())
         serialThread->run();
-
+    // delay(100);
     if (updateLightsThread->shouldRun())
         updateLightsThread->run();
+    // delay(100);
 }
