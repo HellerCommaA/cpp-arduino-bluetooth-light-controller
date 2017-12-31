@@ -1,9 +1,9 @@
+
+#include <Thread.h>
+#include <stdarg.h>
 #include "lights.h"
 #include "Arduino.h"
 #include "pins.h"
-#include <Thread.h>
-#include <stdarg.h>
-#include "SoftwareSerial.h"
 
 void ttyprintf(char *fmt, ... ){
     char buf[128];
