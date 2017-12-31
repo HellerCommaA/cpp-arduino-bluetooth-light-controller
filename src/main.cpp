@@ -1,18 +1,14 @@
 #include "Arduino.h"
+#include "lights.h"
 
-#ifndef LED_BUILTIN
-#define LED_BUILTIN 13
-#endif
+Lights *gLights = nullptr;
 
 void setup()
 {
-    pinMode(LED_BUILTIN, HIGH);
+    gLights = new Lights();
 }
 
 void loop()
 {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(100);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(100);
+    gLights->run();
 }
